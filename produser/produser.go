@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func PublishOne(ex exchange.ExchangeStruct, message string, routingKey string) {
+func PublishOne(ex exchange.ExchangeStruct, message string, routingKey string) error {
 
 	err := ex.Channel.PublishWithContext(ex.Ctx,
 		ex.Name,    // exchange
@@ -20,18 +20,25 @@ func PublishOne(ex exchange.ExchangeStruct, message string, routingKey string) {
 			Body:         []byte(message),
 		})
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	log.Println(" [x] Sent: ", message)
 	fmt.Println()
 
+	return err
 }
 
-func PublishMany(ex exchange.ExchangeStruct, messages []string, routingKey string) {
+func PublishMany(ex exchange.ExchangeStruct, messages []string, routingKey string) error {
+	var err error
 
 	for _, message := range messages {
-		PublishOne(ex, message, routingKey)
+		err = PublishOne(ex, message, routingKey)
+		if err != nil {
+			return err
+		}
 	}
+
+	return err
 
 }

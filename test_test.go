@@ -7,6 +7,7 @@ import (
 	"github.com/IvaCheMih/RabbitMQ_pattern/produser"
 	"github.com/IvaCheMih/RabbitMQ_pattern/queue"
 	"github.com/IvaCheMih/RabbitMQ_pattern/vars"
+	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 )
@@ -42,7 +43,10 @@ func TestCase(t *testing.T) {
 
 	go consumer.StartConsumer(qu, "test_consumer", consumerChan)
 
-	produser.PublishMany(ex, vars.Messages, testQueue.Key)
+	err = produser.PublishMany(ex, vars.Messages, testQueue.Key)
+	if err != nil {
+		t.Errorf("Should not produce an error")
+	}
 
 	for i := 0; i < len(vars.Messages); i++ {
 		m := <-consumerChan
@@ -55,5 +59,8 @@ func TestCase(t *testing.T) {
 		}
 
 	}
+
+	assert.Nil(t, err)
+	assert.Equal(t, nil, err)
 
 }
